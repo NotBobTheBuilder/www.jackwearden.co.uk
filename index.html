@@ -54,6 +54,27 @@
         text-transform: uppercase;
     }
 
+    .left:before,
+    .right:before {
+        content: "jack-wearden(1)";
+    }
+
+    .name:before {
+        content: "Name";
+    }
+
+    .description:before {
+        content: "Description";
+    }
+
+    .see-also:before {
+        content: "See Also";
+    }
+
+    .contact:before {
+        content: "Contact";
+    }
+
     .left {
         float: left;
     }
@@ -97,29 +118,29 @@
 <body>
     <article itemscope itemtype="http://data-vocabulary.org/Person">
         <header>
-            <h3 class="left">jack-wearden(1)</h3>
-            <h3 class="right">jack-wearden(1)</h3>
+            <h3 class="left"></h3>
+            <h3 class="right"></h3>
         </header>
 
         <section>
-            <h2>Name</h2>
+            <h2 class="name"></h2>
             <p><span itemprop="name">Jack Wearden</span>, @jackweirdy - <span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address"><span itemprop="locality">Manchester</span></span>-born geek.</p>
         </section>
 
         <section>
-            <h2>Description</h2>
+            <h2 class="description"></h2>
             <p>Jack Wearden is a Free Software evangelist, Linux user, Raspberry Pi enthusiast and geek.</p>
             <p>Currently a Computer Science <span itemprop="title">student</span> at the <span itemprop="affiliation">University of Birmingham</span>.</p>
         </section>
 
         <section>
-            <h2>See Also</h2>
+            <h2 class="see-also"></h2>
                 <p><a href="https://github.com/NotBobTheBuilder">GitHub Account</a>: Code released as open source</p>
             <p><a href="http://lanyrd.com/profile/jackweirdy/">Lanyrd Profile</a>: Links to speaking history and slides used</p>
         </section>
 
         <section>
-            <h2>Contact</h2>
+            <h2 class="contact"></h2>
             <address>
                 <p>Mail: <a href="mailto:jack@jackwearden.co.uk">jack@jackwearden.co.uk</a></p>
                 <p>Twitter: <a href="https://twitter.com/jackweirdy">@jackweirdy</a></p>
