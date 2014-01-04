@@ -1,0 +1,13 @@
+/* BLURB */
+    This site was created by Jack Wearden.
+
+    It's not currently that extensive, though was lovingly hand crafted with Vim.
+    I will have a WordPress blog in place soon.
+
+    Thanks for coming :)
+
+/* SITE */
+    Last Update: 2013/10/06
+    Language: British English (en-gb)
+    Doctype: HTML5
+    Built With: Vim, Chromium DevTools
