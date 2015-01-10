@@ -1,40 +1,41 @@
-server {
-  server_name jackwearden.co.uk www.jackwearden.co.uk;
-
-  listen [::]:80 default_server ipv6only=on;
-  listen 80 default_server;
-  rewrite ^/(.*) https://www.jackwearden.co.uk/$1 permanent;
+upstream blog {
+    server 127.0.0.1:2368;
 }
 
 server {
-  server_name www.jackwearden.co.uk;
-
-  listen [::]:443 ipv6only=on ssl; 
-  listen 443 ssl;
-
-  ssl_certificate /etc/nginx/ssl/jackwearden.co.uk.crt;
-  ssl_certificate_key /etc/nginx/ssl/privateKey.key;
-  ssl_ciphers RC4:HIGH:!aNULL:!MD5;
-  ssl_prefer_server_ciphers on;
-
-  root /usr/share/nginx/www/www.jackwearden.co.uk;
-
-  location = /favicon.ico {
-    log_not_found off;
-    access_log off;
-  }
- 
-  location = /robots.txt {
-    allow all;
-    log_not_found off;
-    access_log off;
-  }
+	server_name jackwearden.co.uk www.jackwearden.co.uk;
+	listen [::]:80 default_server;
+	listen 80 default_server;
+	rewrite ^/(.*) https://www.jackwearden.co.uk/$1 permanent;
 }
 
 server {
-  server_name jackwearden.co.uk;
+	server_name jackwearden.co.uk;
+	add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
 
-  listen 443;
-  listen [::]:443;
-  rewrite ^/(.*) https://www.jackwearden.co.uk$1 permanent;
+	listen [::]:443 ssl spdy;
+	listen 443 ssl spdy;
+
+	ssl_certificate /etc/nginx/ssl/jackwearden.co.uk.crt;
+	ssl_certificate_key /etc/nginx/ssl/jackwearden.co.uk.key;
+	ssl_ciphers RC4:HIGH:!aNULL:!MD5;
+	ssl_prefer_server_ciphers on;
+
+	rewrite ^/(.*) https://www.jackwearden.co.uk/$1 permanent;
+}
+
+server {
+	server_name www.jackwearden.co.uk;
+	add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
+
+	listen [::]:443 ssl spdy default_server;
+	listen 443 ssl spdy default_server;
+
+	ssl_certificate /etc/nginx/ssl/jackwearden.co.uk.crt;
+	ssl_certificate_key /etc/nginx/ssl/jackwearden.co.uk.key;
+	ssl_ciphers RC4:HIGH:!aNULL:!MD5;
+	ssl_prefer_server_ciphers on;
+
+	root /usr/share/nginx/www/www.jackwearden.co.uk;
+
 }
