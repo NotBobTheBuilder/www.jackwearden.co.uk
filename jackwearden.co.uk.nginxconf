@@ -1,7 +1,3 @@
-upstream blog {
-    server 127.0.0.1:2368;
-}
-
 server {
 	server_name jackwearden.co.uk www.jackwearden.co.uk;
 	listen [::]:80 default_server;
