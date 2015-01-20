@@ -1,4 +1,4 @@
-www.jackwearden.co.uk
+https://www.jackwearden.co.uk
 =====================
 
 Source code for [my site](https://www.jackwearden.co.uk)
