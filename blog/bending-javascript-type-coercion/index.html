@@ -1,0 +1,319 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Bending JavaScript with Type Coercion</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/blog/assets/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+
+    <link rel="canonical" href="http://www.jackwearden.co.uk/blog/bending-javascript-type-coercion/" />
+
+    <meta property="og:site_name" content="Jack Wearden&#39;s Blog" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Bending JavaScript with Type Coercion" />
+    <meta property="og:description" content="Reducing JavaScript to ungooglable characters: because clarity is for n00bs" />
+    <meta property="og:url" content="https://www.jackwearden.co.uk/blog/bending-javascript-type-coercion/" />
+    <meta property="article:published_time" content="2015-03-08T22:00:00.000Z" />
+    <meta property="article:tag" content="JavaScript" />
+
+    <meta name="twitter:card" content="content" />
+    <meta name="twitter:title" content="Bending JavaScript with Type Coercion" />
+    <meta name="twitter:description" content="Reducing JavaScript to ungooglable characters: because clarity is for n00bs" />
+    <meta name="twitter:url" content="https://www.jackwearden.co.uk/blog/bending-javascript-type-coercion/" />
+
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Jack Wearden&#39;s Blog",
+    "author": {
+        "@type": "Person",
+        "name": "Jack Wearden",
+        "image": "https://www.jackwearden.co.uk/profile.jpg",
+        "url": "http://www.jackwearden.co.uk/blog/",
+        "sameAs": "https://www.jackwearden.co.uk"
+    },
+    "headline": "Bending JavaScript with Type Coercion",
+    "url": "https://www.jackwearden.co.uk/blog/bending-javascript-type-coercion",
+    "datePublished": "2015-03-08T22:00:00.000Z",
+    "keywords": "JavaScript",
+    "description": "Reducing JavaScript to ungooglable characters: because clarity is for n00bs"
+}
+    </script>
+</head>
+<body class="post-template">
+<header class="main-header post-head no-cover">
+    <nav class="main-nav clearfix">
+        <a class="back-button icon-arrow-left" href="http://www.jackwearden.co.uk/">Home</a>
+        <a class="back-button icon-arrow-left" href="http://www.jackwearden.co.uk/blog">Blog Index</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+    <article class="post">
+        <header class="post-header">
+            <h1 class="post-title">Bending JavaScript with Type Coercion</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2015-03-08">8 March 2015</time>
+            </section>
+        </header>
+
+        <section class="post-content">
+
+<h2>Reducing JavaScript to ungoogleable characters</h2>
+<p>Sometimes, one line of code is all you need. When executed, the JavaScript</p>
+<pre><code>alert('just banter m80');</code></pre>
+<p>opens an alert message with the text “just banter m80”. An odd choice of words, but the process is clear.</p>
+<p>The only code quality metric I’ve ever believed in is <a href="http://www.osnews.com/story/19266/WTFs_m">WTFs per minute</a>, and were I reviewing my code, I’d probably give it a 0.</p>
+<p>As far as I’m aware, there’s no upper bound of WTFs per minute, so I thought I’d try and find one.</p>
+<p>The end result is <a href="https://github.com/NotBobTheBuilder/stupidest_thing/blob/master/lib/dumb.js">here</a>, but I encourage you to read the process before looking at it.</p>
+<h2>Building Blocks</h2>
+<p>JavaScript’s worst part, in my opinion, is it’s implicit type coercion. It does really weird things. For example:</p>
+<pre><code>// string + number
+"hello" + 1 == "hello1"</code></pre>
+<p>Above, a number gets cast to a string, and appended to hello. Perhaps undesirable, but not too weird. Then:</p>
+<pre><code>// array + array
+[] + [] == ""</code></pre>
+<p>Two added arrays are casted to strings and joined. What. Also:</p>
+<pre><code>// array + Object
+[] + {} == "[object Object]"</code></pre>
+<p>That’s weirder - an object is cast to the string "[object Object]". Definitely weird. In fact, all JS types can be cast into strings - normally meaninglessly. This is very useful for us later, and is 1 of 2 building blocks for what we do later.</p>
+<p>The other building block is that in modern JavaScript runtimes, strings are indexable by number. That is to say <code>"hello world"[0] == "h"</code>.</p>
+<h2>Building something crazy.</h2>
+<p>So, we start with <code>alert('just banter m80')</code>. Lets expand that into something that only uses ungooglable characters.</p>
+<p>The obvious place to start is the message itself. We know we can build strings by joining the results of weird casts together, so lets start with this:</p>
+<pre><code>([] + {} + {}[{}] + ![] + !![])</code></pre>
+<p>This hideous piece of code gives us the string <code>[object Object]undefinedfalsetrue</code> and works like this:</p>
+<pre><code>([]       // everything that follows will be cast to string
+
++ {}      // {}.toString() == '[object Object]'
+
+          // accesses object property "[object Object]"
++ {}[{}]  // this gives us undefined
+          // undefined, when cast to string, is "undefined"
+
++ ![]     // ![] casts to boolean, and is false
+
++ !![]    // we get to false as above, and !false is true.
+)</code></pre>
+<p>Success! We now have the letters "abcdefijlnorstu", which is pretty much all of the letters in our message.</p>
+<p>But how do we get at them? And how do we build our <code>80</code>? Fortunately, both are solvable with Numbers - we can access individual letters in a string by index, and numbers are trivially castable to strings.</p>
+<h2>Numbers</h2>
+<p>Another “nuance” of JavaScript is how we can make numbers by adding booleans. We can get 1 by adding <code>false</code> and <code>true</code>:</p>
+<pre><code>![] + !![] == 1</code></pre>
+<p>so we can quickly grab some powers of 2 like this:</p>
+<pre><code>_=![] + !![],     // 1
+__=_+_,           // 2
+___=__*__,        // 4
+____=___*__,      // 8
+_____=____*__     // 16</code></pre>
+<p>and if we save our nasty string too:</p>
+<pre><code>______=([] + {} + {}[{}] + ![] + !![])</code></pre>
+<p>we can start grabbing individual letters like so:</p>
+<pre><code>// [obj…
+//    ^ 3
+
+______[_+__] // j (3)</code></pre>
+<p>And now when we call alert, we can use everything we designed so far:</p>
+<pre><code>alert(
+    ______[_+__]                // j (03)
+  + ______[_____-_]             // u (15)
+  + ______[(_____*__)-___-_]    // s (27)
+  + ______[___+__]              // t (06)
+  + ______[____-_]              //   (07)
+  + ______[__]                  // b (02)
+  + ______[_____+____+_]        // a (25)
+  + ______[_____]               // n (16)
+  + ______[___+__]              // t (06)
+  + ______[___]                 // e (04)
+  + ______[_____*__-__]         // r (30)
+  + ______[____-_]              //   (07)
+  + 'm'
+  + ____                        // 8
+  + (_-_)                       // 0
+);</code></pre>
+<p>You’ll notice we can’t get an m from our existing string. This isn’t too tricky to solve.</p>
+<h2>Constructors</h2>
+<p>Every “thing” in JavaScript (that is, everything that’s not <code>null</code> or <code>undefined</code>) has a *constructor*. A constructor is a function that can be used to make values of that type.</p>
+<p>For example, <code>false.constructor</code> is the <code>Boolean</code> function, <code>"".constructor</code> is the <code>String</code> function and, most usefully, <code>(0).constructor</code> is the <code>Number</code> function. That’s right - Number with a big, lovely "m".</p>
+<p>And, would you believe it, we have all the letters we need to build the string "constructor":</p>
+<pre><code>(_[
+    ______[___+_]               // c (05)
+  + ______[_]                   // o (01)
+  + ______[_____]               // n (16)
+  + ______[(_____*__)-___-_]    // s (27)
+  + ______[___+__]              // t (06)
+  + ______[_____*__-__]         // r (30)
+  + ______[_____-_]             // u (15)
+  + ______[___+_]               // c (05)
+  + ______[___+__]              // t (06)
+  + ______[_]                   // o (01)
+  + ______[_____*__-__]         // r (30)
+]) // Number function</code></pre>
+<p>Now we have the function, we just need the m. Functions can be cast to strings too - if we pull out the now-clichéd technique of prepending with an array, we get this:</p>
+<pre><code>[] + Number == "function Number() { [native code] }"</code></pre>
+<p>(the <code>[native code]</code> block is because <code>Number</code> is implemented in C, not JS)</p>
+<p>all we need to do now is get the m out from index 11 (____+___-_).</p>
+<p>The full code at this point is <a href="https://github.com/NotBobTheBuilder/stupidest_thing/blob/v2/lib/dumb.js">here</a>; but the core part is here:</p>
+<pre><code>alert(
+    ______[_+__]                // j (03)
+  + ______[_____-_]             // u (15)
+  + ______[(_____*__)-___-_]    // s (27)
+  + ______[___+__]              // t (06)
+  + ______[____-_]              //   (07)
+  + ______[__]                  // b (02)
+  + ______[_____+____+_]        // a (25)
+  + ______[_____]               // n (16)
+  + ______[___+__]              // t (06)
+  + ______[___]                 // e (04)
+  + ______[_____*__-__]         // r (30)
+  + ______[____-_]              //   (07)
+  + ________                    // m
+  + ____                        // 8
+  + (_-_)                       // 0
+);</code></pre>
+<p>The next question is though - how do we get rid of <code>alert</code>? It’s not a string or value at this point, it’s a variable name.</p>
+<p>It’s here that the rabbit hole deepens.</p>
+<h2>Alert</h2>
+<p>Like many interpreted languages, JavaScript has an <code>eval</code> function, which takes in a string and runs it as code. Since we have the letters to build the word <code>alert</code>, <code>eval('alert')</code> would give us the <code>alert</code> function. But how do we get eval? We’d have to <code>eval('eval')</code>, which doesn’t help at all.</p>
+<p>The answer is along the same lines though. Functions have a constructor called <code>Function</code>, which accepts a string and returns a function with that string as a body. So if we run</p>
+<pre><code>Function('return alert')</code></pre>
+<p>we get a function which gives us the alert function, and in turn</p>
+<pre><code>Function('return alert')()</code></pre>
+<p>is the alert function itself.</p>
+<p>But where do we get the <code>Function</code> value from? Since all functions have <code>Function</code> as a constructor, any function will do - and fortunately we have one - <code>Number</code>!</p>
+<p>Unobfuscated, then, our code looks like this:<p>
+<pre><code>0['constructor']['constructor']('return alert')()('just banter m80')</code></pre>
+<p>It works like this:</p>
+<pre><code>0['constructor']    // Number
+['constructor']     // Function
+('return alert')    // A function that returns alert
+()                  // the alert function itself
+('just banter m80') // alert with our message</code></pre>
+<p>Now if we pull together our string construction from type coercion, we get this:</p>
+<pre><code>_=![] + !![],     // 1
+__=_+_,           // 2
+___=__*__,        // 4
+____=___*__,      // 8
+_____=____*__,    // 16
+______=([] + {} + {}[{}] + ![] + !![]), // [object Object]undefinedfalsetrue
+_______=  // "contructor"
+    ______[___+_]               // c (05)
+  + ______[_]                   // o (01)
+  + ______[_____]               // n (16)
+  + ______[(_____*__)-___-_]    // s (27)
+  + ______[___+__]              // t (06)
+  + ______[_____*__-__]         // r (30)
+  + ______[_____-_]             // u (15)
+  + ______[___+_]               // c (05)
+  + ______[___+__]              // t (06)
+  + ______[_]                   // o (01)
+  + ______[_____*__-__],        // r (30)
+________= _[_______], // Number function
+_________=([] + ________)[____+___-_], // m from Number.toString()
+________[_______](
+    ______[_____*__-__]         // r (30)
+  + ______[___]                 // e (04)
+  + ______[___+__]              // t (06)
+  + ______[_____-_]             // u (15)
+  + ______[_____*__-__]         // r (30)
+  + ______[_____]               // n (16)
+  + ______[____-_]              //   (07)
+  + ______[_____+____+_]        // a (25)
+  + ______[_____+____+__]       // l (26)
+  + ______[___]                 // e (04)
+  + ______[_____*__-__]         // r (30)
+  + ______[___+__]              // t (06)
+)()(
+    ______[_+__]                // j (03)
+  + ______[_____-_]             // u (15)
+  + ______[(_____*__)-___-_]    // s (27)
+  + ______[___+__]              // t (06)
+  + ______[____-_]              //   (07)
+  + ______[__]                  // b (02)
+  + ______[_____+____+_]        // a (25)
+  + ______[_____]               // n (16)
+  + ______[___+__]              // t (06)
+  + ______[___]                 // e (04)
+  + ______[_____*__-__]         // r (30)
+  + ______[____-_]              //   (07)
+  + _________                   // m
+  + ____                        // 8
+  + (_-_)                       // 0
+);
+</code></pre>
+<p>Which, uncommented and unspaced, looks likes this:</p>
+
+<pre><code>_=![] + !![],__=_+_,___=__*__,____=___*__,_____=____*__,______=([] + {} + {}[{}] + ![] + !![]),_______=______[___+_]+ ______[_]+ ______[_____]+ ______[(_____*__)-___-_]+ ______[___+__]+ ______[_____*__-__]+ ______[_____-_]+ ______[___+_]+ ______[___+__]+ ______[_]+ ______[_____*__-__],________= _[_______],_________=([] + ________)[____+___-_],________[_______](______[_____*__-__]+ ______[___]+ ______[___+__]+ ______[_____-_]+ ______[_____*__-__]+ ______[_____]+ ______[____-_]+ ______[_____+____+_]+ ______[_____+____+__]+ ______[___]+ ______[_____*__-__]+ ______[___+__])()(______[_+__]+ ______[_____-_]+ ______[(_____*__)-___-_]+ ______[___+__]+ ______[____-_]+ ______[__]+ ______[_____+____+_]+ ______[_____]+ ______[___+__]+ ______[___]+ ______[_____*__-__]+ ______[____-_]+ _________+ ____+ (_-_));</code></pre>
+<p>Beautiful.</p>
+<p>You may wonder why I’m using commas instead of semicolons. Because you can’t google it.</p>
+
+<h2>Contributing</h2>
+<p>I’ll happily merge pull requests into <a href="https://github.com/NotBobTheBuilder/stupidest_thing">the GitHub repo</a> if the changes make the code more complex, or make me feel nauseous.</p>
+
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="/blog/author/jack-wearden/" style="background-image: url(https://www.jackwearden.co.uk/profile.jpg)"><span class="hidden">Jack Wearden's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="/blog/author/jack-wearden/">Jack Wearden</a></h4>
+
+                    <p>2nd year CS student at the University of Birmingham, UK. JavaScript &amp; Python hack. Organiser of @brumCodeJo and @brumJS. I tweet at @jackweirdy</p>
+                <div class="author-meta">
+                    <span class="author-location icon-location">Manchester/Birmingham, UK</span>
+                    <span class="author-link icon-link"><a href="https://www.jackwearden.co.uk">https://www.jackwearden.co.uk</a></span>
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=Bending%20JavaScript%20with%20Type%20Coercion&amp;url=https://www.jackwearden.co.uk/blog/bending-javascript-type-coercion/"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://www.jackwearden.co.uk/blog/bending-javascript-type-coercion/"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=https://www.jackwearden.co.uk/blog/bending-javascript-type-coercion/"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+    </article>
+
+</main>
+
+    <footer class="site-footer clearfix">
+         <section class="copyright"><a href="http://www.jackwearden.co.uk/blog">Jack Wearden&#x27;s Blog</a> &copy; 2015</section>
+    </footer>
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41203555-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+</body>
+</html>

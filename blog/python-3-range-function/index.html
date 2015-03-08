@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Python 3 range function</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/blog/assets/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+
+    <link rel="canonical" href="http://www.jackwearden.co.uk/blog/python-3-range-function/" />
+
+    <meta property="og:site_name" content="Jack Wearden&#39;s Blog" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Python 3 range function" />
+    <meta property="og:description" content="Something I noticed after today's Brum Codejo was a new feature of Python's range function. The range method in Python 2 accepts an optional start index, an end index and an optional step count and returns a list, like so..." />
+    <meta property="og:url" content="http://www.jackwearden.co.uk/blog/python-3-range-function/" />
+    <meta property="article:published_time" content="2014-02-16T12:00:00.000Z" />
+    <meta property="article:modified_time" content="2014-02-19T15:11:42.343Z" />
+    <meta property="article:tag" content="Python" />
+    <meta property="article:tag" content="Python3" />
+
+    <meta name="twitter:card" content="content" />
+    <meta name="twitter:title" content="Python 3 range function" />
+    <meta name="twitter:description" content="Something I noticed after today's Brum Codejo was a new feature of Python's range function. The range method in Python 2 accepts an optional start index, an end index and an optional step count and returns a list, like so..." />
+    <meta name="twitter:url" content="http://www.jackwearden.co.uk/blog/python-3-range-function/" />
+
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Jack Wearden&#39;s Blog",
+    "author": {
+        "@type": "Person",
+        "name": "Jack Wearden",
+        "image": "https://www.jackwearden.co.uk/profile.jpg",
+        "url": "http://www.jackwearden.co.uk/blog/author/jack-wearden",
+        "sameAs": "https://www.jackwearden.co.uk"
+    },
+    "headline": "Python 3 range function",
+    "url": "http://www.jackwearden.co.uk/blog/python-3-range-function/",
+    "datePublished": "2014-02-16T12:00:00.000Z",
+    "dateModified": "2014-02-19T15:11:42.343Z",
+    "keywords": "Python, Python3",
+    "description": "Something I noticed after today's Brum Codejo was a new feature of Python's range function. The range method in Python 2 accepts an optional start index, an end index and an optional step count and returns a list, like so"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.5" />
+</head>
+<body class="post-template tag-python tag-python3">
+
+
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="http://www.jackwearden.co.uk/">Home</a>
+        <a class="back-button icon-arrow-left" href="http://www.jackwearden.co.uk/blog">Blog Index</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post tag-python tag-python3">
+
+        <header class="post-header">
+            <h1 class="post-title">Python 3 range function</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2014-02-16">16 February 2014</time>  on <a href="/blog/tag/python/">Python</a>, <a href="/blog/tag/python3/">Python3</a>
+            </section>
+        </header>
+
+        <section class="post-content">
+            <p>Something I noticed after today's <a href="http://brumcodejo.github.io/">Brum Codejo</a> was a new feature of Python's range function.</p>
+
+<p>The <a href="http://docs.python.org/2/library/functions.html#range"><code>range</code> method in Python 2</a> accepts an optional start index, an end index and an optional step count and returns a list, like so:</p>
+
+<p>(Note that the last element is always less than any supplied end index. This means <code>len(range(5)) == 5</code>)</p>
+
+<pre><code>range(5)        == [0, 1, 2, 3, 4]
+range(1, 5)     == [1, 2, 3, 4]
+range(1, 10, 2) == [1, 3, 5, 7, 9]
+</code></pre>
+
+<p>There's a change in Python 3 - <code>range</code> is now a type. This means that <code>range(2, 3)</code> is essentially a constructor.</p>
+
+<p>Instances of <code>range</code> are still iterable, so <code>for i in range(n)</code> loops will still work fine, but the values are computed lazily, as with <a href="http://www.python.org/dev/peps/pep-0255/">generators</a>. This means that range can make some comparisons cleaner.</p>
+
+<p>For example, in <a href="https://en.wikipedia.org/wiki/Conways_Game_of_Life">Conway's Game of Life</a>, (which we attempted at today's CodeJo), cells live or die depending on the number of neighbors each cell has. This can make use of Python's chained comparisons and be implemented as:</p>
+
+<pre><code>cell_lives = 3 &gt;= neighbour_count &gt;= 2
+</code></pre>
+
+<p>using the new range, this could also be rewritten as follows:</p>
+
+<pre><code>cell_lives = neighbour_count in range(2, 4)
+</code></pre>
+
+<p>Admittedly, that doesn't grant much of an improvement; however it could be useful when you also need to check modulo. For example, to check if a number is a multiple of three between 60 and 90:</p>
+
+<pre><code>(90 &gt; number &gt;= 60) and (number % 3 == 0)
+</code></pre>
+
+<p>could be replaced by</p>
+
+<pre><code>number in range(60, 90, 3)
+</code></pre>
+
+<p>While this is still possible in Python 2, it requires the construction of the whole list, which is then searched. In Python 3, this list isn't built, the <code>__contains__</code> method on the range object determines if the number lies in the sequence.</p>
+
+<p>Also note that this isn't the same as Python 2's <a href="http://docs.python.org/2/library/functions.html#xrange"><code>xrange</code></a>, which only supports lazy generation and indexing - with <code>xrange</code> a call to <code>__contains__</code> with the <code>in</code> keyword performs a linear search for a value.</p>
+
+<p>Besides that, I'm convinced this is useful, but I can't think of a use of it.</p>
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="/blog/author/jack-wearden/" style="background-image: url(https://www.jackwearden.co.uk/profile.jpg)"><span class="hidden">Jack Wearden's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="/blog/author/jack-wearden/">Jack Wearden</a></h4>
+
+                    <p>2nd year CS student at the University of Birmingham, UK. JavaScript &amp; Python hack. Organiser of @brumCodeJo and @brumJS. I tweet at @jackweirdy</p>
+                <div class="author-meta">
+                    <span class="author-location icon-location">Manchester/Birmingham, UK</span>
+                    <span class="author-link icon-link"><a href="https://www.jackwearden.co.uk">https://www.jackwearden.co.uk</a></span>
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=Python%203%20range%20function&amp;url=http://www.jackwearden.co.uk/blog/python-3-range-function/"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://www.jackwearden.co.uk/blog/python-3-range-function/"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://www.jackwearden.co.uk/blog/python-3-range-function/"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+    </article>
+
+</main>
+
+
+
+    <footer class="site-footer clearfix">
+         <section class="copyright"><a href="http://www.jackwearden.co.uk/blog">Jack Wearden&#x27;s Blog</a> &copy; 2015</section>
+    </footer>
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41203555-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+</body>
+</html>
