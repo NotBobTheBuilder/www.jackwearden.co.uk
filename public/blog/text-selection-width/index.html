@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Fixing oversized margin on text selection</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/blog/assets/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+
+    <link rel="canonical" href="http://www.jackwearden.co.uk/blog/text-selection-width/" />
+
+    <meta property="og:site_name" content="Jack Wearden&#39;s Blog" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Fixing oversized margin on text selection" />
+    <meta property="og:description" content="Sometimes when selecting paragraph text on HTML documents, you may get a selection that takes up the full page width. Typically, the paragraph you’ve selected has a width or a max-width..." />
+    <meta property="og:url" content="http://www.jackwearden.co.uk/blog/text-selection-width/" />
+    <meta property="article:published_time" content="2014-02-16T12:00:00.000Z" />
+    <meta property="article:modified_time" content="2014-02-19T15:11:42.343Z" />
+    <meta property="article:tag" content="HTML" />
+    <meta property="article:tag" content="CSS" />
+
+    <meta name="twitter:card" content="content" />
+    <meta name="twitter:title" content="Fixing oversized margin on text selection" />
+    <meta name="twitter:description" content="Sometimes when selecting paragraph text on HTML documents, you may get a selection that takes up the full page width. Typically, the paragraph you’ve selected has a width or a max-width..." />
+    <meta name="twitter:url" content="http://www.jackwearden.co.uk/blog/text-selection-width/" />
+
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Jack Wearden&#39;s Blog",
+    "author": {
+        "@type": "Person",
+        "name": "Jack Wearden",
+        "image": "https://www.jackwearden.co.uk/profile.jpg",
+        "url": "https://www.jackwearden.co.uk/",
+        "sameAs": "https://www.jackwearden.co.uk"
+    },
+    "headline": "Fixing oversized margin on text selection",
+    "url": "http://www.jackwearden.co.uk/blog/text-selection-width/",
+    "datePublished": "2014-02-16T12:00:00.000Z",
+    "dateModified": "2014-02-19T15:11:42.343Z",
+    "keywords": "HTML, CSS",
+    "description": "Sometimes when selecting paragraph text on HTML documents, you may get a selection that takes up the full page width. Typically, the paragraph you’ve selected has a width or a max-width..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.5" />
+</head>
+<body class="post-template">
+
+
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+        <a class="back-button icon-arrow-left" href="/blog">Blog Index</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Fixing oversized margin on text selection</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2014-02-16">22 March 2014</time> on HTML &amp; CSS.
+            </section>
+        </header>
+
+        <section class="post-content">
+            <p>Sometimes when selecting paragraph text on HTML documents, you may get a selection that takes up the full page width.</p>
+            <p>Typically, the paragraph you’ve selected has a <code>width</code> or <code>max-width</code> property, but the selection width is calculated at 100% of the width of the parent element or the page. It looks something like this:</p>
+
+            <p><a href="http://imgur.com/awh345A"><img src="http://i.imgur.com/awh345A.gif" title="source: imgur.com" /></a></p>
+            <p><a href="/blog/text-selection-width/broken.html">You can see the broken demo here</a></p>
+
+            <p>This, it turns out, is a pretty easy fix - you only need to add <code>overflow: hidden;</code> to the text container.</p>
+
+            <p>In my case, that’s the <code>article</code> block. The style now appears as:</p>
+
+<pre><code>article {
+  max-width: 400px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+</code></pre>
+
+            <p>and the solution:</p>
+            <p><a href="http://imgur.com/gtuio04"><img src="http://i.imgur.com/gtuio04.gif" title="source: imgur.com" /></a></p>
+
+            <p><a href="/blog/text-selection-width/fixed.html">You can see the working demo here</a></p>
+
+            <p>Hopefully that helps to improve the appearance of text selection on your long-form text :)</p>
+
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="/" style="background-image: url(/profile.jpg)"><span class="hidden">Jack Wearden's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="/">Jack Wearden</a></h4>
+
+                    <p>CS student at the University of Birmingham, UK. Developer at Whisk.com. JavaScript &amp; Python hack. Organiser of @brumCodeJo and @brumJS. I tweet at @jackweirdy</p>
+                <div class="author-meta">
+                    <span class="author-location icon-location">Manchester/Birmingham, UK</span>
+                    <span class="author-link icon-link"><a href="/">https://www.jackwearden.co.uk</a></span>
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=Fixing%20oversized%20margin%20on%20text%20selection&amp;url=http://www.jackwearden.co.uk/blog/text-selection-width/"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://www.jackwearden.co.uk/blog/text-selection-width/"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://www.jackwearden.co.uk/blog/text-selection-width/"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+    </article>
+
+</main>
+
+
+
+    <footer class="site-footer clearfix">
+         <section class="copyright"><a href="/blog">Jack Wearden&#x27;s Blog</a> &copy; 2015</section>
+    </footer>
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41203555-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+</body>
+</html>
